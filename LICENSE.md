@@ -1,4 +1,4 @@
-EVNotifyAPI is licensed under the Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) License.
+EVNotifyAPI is licensed under the **Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)** License.
 
 For further information please visit https://creativecommons.org/licenses/by-nc-nd/4.0/ for the human readable version or 
 https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode for the full legal code.
