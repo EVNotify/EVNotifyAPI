@@ -351,7 +351,7 @@ Renewing the token instantly changes the token of the account, so the old token 
 
 ### HTTPS Request
 
-`POST https://evnotify.de:8743/token`
+`POST https://evnotify.de:8743/renewtoken`
 
 ### URL Parameters
 
@@ -361,7 +361,7 @@ akey | The AKey of the account to renew the token for
 password | The password of the account
 
 ```shell
-curl "https://evnotify.de:8743/token"
+curl "https://evnotify.de:8743/renewtoken"
   -H "Content-Type: application/json"
   -X POST -d '{"akey":"akey","password":"password"}'
 ```
