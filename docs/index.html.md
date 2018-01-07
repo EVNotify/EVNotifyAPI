@@ -340,3 +340,46 @@ evnotify.setSettings('akey', 'token', 'password', settingsObj, function(err, set
   console.log('Settings saved: ', set);  // True, if successful
 });
 ```
+
+## Renew the account token
+In order to be able to renew the token of your account, you will need to provide the AKey as well as the password of the account.
+Changing the account token in regular periods is a good security manner.
+
+<aside class="warning">
+Renewing the token instantly changes the token of the account, so the old token is no longer usable.
+</aside>
+
+### HTTPS Request
+
+`POST https://evnotify.de:8743/token`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+akey | The AKey of the account to renew the token for
+password | The password of the account
+
+```shell
+curl "https://evnotify.de:8743/token"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","password":"password"}'
+```
+
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Token renewed",
+  "token": "newtoken"
+}
+```
+
+```javascript
+var evnotify = new EVNotify();
+
+// renew token of the account
+evnotify.renewToken('akey', 'password', function(err, token) {
+  console.log('New token: ', token);  // The new token
+});
+```
