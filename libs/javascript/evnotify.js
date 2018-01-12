@@ -20,7 +20,7 @@
                     // try to parse the response as JSON
                     try {retData = JSON.parse(this.responseText);} catch (e) {retData = this.responseText}
 
-                    callback(null, {
+                    callback(((this.status !== 200)? this.status : null), {
                         status: this.status,
                         data: retData
                     });
@@ -61,6 +61,26 @@
             self.akey = ((!err && res && res.data)? res.data.akey : null);
             // send response to callback if applied
             if(typeof callback === 'function') callback(err, self.akey);
+        });
+
+        return self;
+    };
+
+    /**
+     * Function to register account for given akey with specified password to retrieve and set token
+     * @param  {String}   akey          the AKey to register
+     * @param  {String}   password      the password to use for the AKey
+     * @param  {Function} [callback]    callback function
+     * @return {Object}                 returns this
+     */
+    EVNotify.prototype.register = function (akey, password, callback) {
+        var self = this;
+
+        sendRequest('register', {akey: akey, password: password}, function(err, res) {
+            // attach token
+            self.token = ((!err && res && res.data)? res.data.token : null);
+            // send response to callback if applied
+            if(typeof callback === 'function') callback(err, self.token);
         });
 
         return self;
