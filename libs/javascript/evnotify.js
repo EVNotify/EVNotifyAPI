@@ -40,13 +40,9 @@
 
     /**
      * The EVNotify constructor class
-     * @param       {String} akey   the account key
      * @constructor                 EVNotify
      */
-    function EVNotify(akey) {
-        if(typeof akey === 'undefined') throw new Error('You must initialize EVNotify with an akey.');
-        this.user = {akey: akey};
-
+    function EVNotify() {
         // prevent wrong declaration
         if(!(this instanceof EVNotify) || this.__previouslyConstructedByEVNotify) throw new Error('EVNotify must be called as constructor. Missing new keyword?');
         this.__previouslyConstructedByEVNotify = true;
