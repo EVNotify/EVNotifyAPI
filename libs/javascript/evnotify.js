@@ -1,5 +1,5 @@
 (function () {
-    "use strict";
+    'use strict';
 
     var RESTURL = 'https://evnotify.de:8743/';
 
@@ -11,17 +11,27 @@
      */
     var sendRequest = function(fnc, data, callback) {
         try {
-            var xmlhttp = new XMLHttpRequest();
+            var xmlhttp = new XMLHttpRequest(),
+                retData;
 
             // apply listener for the request
             xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4) callback(null, {status: this.status, data: JSON.parse(this.responseText)});
+                if (this.readyState == 4) {
+                    // try to parse the response as JSON
+                    try {retData = JSON.parse(this.responseText);} catch (e) {retData = this.responseText}
+
+                    callback(null, {
+                        status: this.status,
+                        data: retData
+                    });
+                }
             };
             xmlhttp.onerror = function(e) {
                 callback(e, null);
             };
             // send the request
-            xmlhttp.open("POST", RESTURL + ((fnc)? fnc : ''), true);
+            xmlhttp.open('POST', RESTURL + ((fnc)? fnc : ''), true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/json');
             xmlhttp.send(((typeof data === 'object')? JSON.stringify(data) : ((typeof data !== 'undefined')? data : '')));
         } catch (e) {
             callback(e, null);
