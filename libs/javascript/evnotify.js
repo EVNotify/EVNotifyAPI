@@ -86,6 +86,26 @@
         return self;
     };
 
+    /**
+     * Function to login account with given credentials and apply the returned token
+     * @param  {String}   akey      the AKey to login
+     * @param  {String}   password  the password to use for the account
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.login = function (akey, password, callback) {
+        var self = this;
+
+        sendRequest('login', {akey: akey, password: password}, function(err, res) {
+            // attach token
+            self.token = ((!err && res && res.data)? res.data.token : null);
+            // send response to callback if applied
+            if(typeof callback === 'function') callback(err, self.token);
+        });
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());
