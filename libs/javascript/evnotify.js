@@ -51,15 +51,19 @@
     /**
      * Function to retrieve a random akey which was available at the time of the request
      * @param  {Function} [callback]    callback function
-     * @return {this}                   returns this
+     * @return {Object}                   returns this
      */
-    EVNotify.prototype.getAKey = function(callback) {
+    EVNotify.prototype.getKey = function(callback) {
+        var self = this;
+
         sendRequest('getkey', {}, function(err, res) {
+            // attach AKey
+            self.akey = ((!err && res && res.data)? res.data.akey : null);
             // send response to callback if applied
-            if(typeof callback === 'function') callback(err, res);
+            if(typeof callback === 'function') callback(err, self.akey);
         });
 
-        return this;
+        return self;
     };
 
     // apply to window
