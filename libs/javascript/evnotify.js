@@ -156,6 +156,27 @@
         return self;
     };
 
+    /**
+     * Function to get the settings and stats of the account for the given AKey
+     * @param  {String}   password      the password of the AKey to get the settings and stats for
+     * @param  {Function} [callback]    callback function
+     * @return {Object}                 returns this
+     */
+    EVNotify.prototype.getSettings = function(password, callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('settings', {akey: self.akey, token: self.token, password: password, option: 'GET'}, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res && res.data && res.data.settings)? res.data.settings : null));
+            });
+        }
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());
