@@ -223,7 +223,7 @@ curl "https://evnotify.de:8743/password"
 var evnotify = new EVNotify();
 
 // change password for account
-evnotify.changePW('akey', 'token', 'oldpassword', 'newpassword', function(err, changed) {
+evnotify.changePW('oldpassword', 'newpassword', function(err, changed) {
   console.log('Password changed: ', changed);  // True, if change was successful
 });
 ```
