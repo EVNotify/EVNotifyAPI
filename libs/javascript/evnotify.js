@@ -8,6 +8,7 @@
      * @param  {String}     [fnc]       the function which should be used (e.g. login)
      * @param  {*}          [data]      the data to send (mostly an object)
      * @param  {Function}   callback    callback function
+     * @return {void}
      */
     var sendRequest = function(fnc, data, callback) {
         try {
@@ -57,10 +58,8 @@
         var self = this;
 
         sendRequest('getkey', {}, function(err, res) {
-            // attach AKey
-            self.akey = ((!err && res && res.data)? res.data.akey : null);
             // send response to callback if applied
-            if(typeof callback === 'function') callback(err, self.akey);
+            if(typeof callback === 'function') callback(err, ((err)? null : self.akey));
         });
 
         return self;
@@ -82,7 +81,7 @@
             // attach AKey
             self.akey = ((self.token)? akey : null);
             // send response to callback if applied
-            if(typeof callback === 'function') callback(err, self.token);
+            if(typeof callback === 'function') callback(err, ((err)? null : self.token));
         });
 
         return self;
@@ -90,10 +89,10 @@
 
     /**
      * Function to login account with given credentials and applies the AKey the returned token
-     * @param  {String}   akey      the AKey to login
-     * @param  {String}   password  the password to use for the account
-     * @param  {Function} callback  callback function
-     * @return {Object}             returns this
+     * @param  {String}   akey          the AKey to login
+     * @param  {String}   password      the password to use for the account
+     * @param  {Function} [callback]    callback function
+     * @return {Object}                 returns this
      */
     EVNotify.prototype.login = function (akey, password, callback) {
         var self = this;
@@ -104,7 +103,7 @@
             // attach AKey
             self.akey = ((self.token)? akey : null);
             // send response to callback if applied
-            if(typeof callback === 'function') callback(err, self.token);
+            if(typeof callback === 'function') callback(err, ((err)? null : self.token));
         });
 
         return self;
@@ -115,7 +114,7 @@
      * NOTE: Requires previous authentication via login request
      * @param  {String}   oldpassword   the old (current) password
      * @param  {String}   newpassword   the new password to set
-     * @param  {Function} callback      callback function
+     * @param  {Function} [callback]    callback function
      * @return {Object}                 returns this
      */
     EVNotify.prototype.changePW = function(oldpassword, newpassword, callback) {
@@ -127,6 +126,30 @@
         } else {
             sendRequest('password', {akey: self.akey, token: self.token, password: oldpassword, newpassword: newpassword}, function(err, res) {
                 if(typeof callback === 'function') callback(err, ((err)? false : true));
+            });
+        }
+
+        return self;
+    };
+
+    /**
+     * Function to renew and change the current token to a new persistent one
+     * NOTE: Requires previous authentication via login request
+     * @param  {String}   password      the password of the AKey to change the token for
+     * @param  {Function} [callback]    callback function
+     * @return {Object}                 returns this
+     */
+    EVNotify.prototype.renewToken = function(password, callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('renewtoken', {akey: self.akey, password: password}, function(err, res) {
+                // attach new token
+                self.token = ((!err && res && res.data && res.data.token)? res.data.token : self.token);
+                if(typeof callback === 'function') callback(err, ((err)? null : self.token));
             });
         }
 
