@@ -133,7 +133,8 @@ evnotify.register('akey', 'password', function(err, token) {
 ```
 
 <aside class="success">
-You can save the returned token safely to use it later for direct authentication.
+The AKey and the retrieved token will be stored within the EVNotify instance.
+In this sample, you would access them with evnotify.akey and evnotify.token.
 </aside>
 
 ## Login with existing account
@@ -283,7 +284,7 @@ curl "https://evnotify.de:8743/settings"
 var evnotify = new EVNotify();
 
 // get the settings and stats for account
-evnotify.getSettings('akey', 'token', 'password', function(err, settingsObj) {
+evnotify.getSettings('password', function(err, settingsObj) {
   console.log('Settings: ', settingsObj);  // Object containing all the settings and stats
 });
 ```
@@ -336,7 +337,7 @@ var evnotify = new EVNotify(),
     settingsObj = {}; // the settings object containing all properties
 
 // set the settings and stats for account
-evnotify.setSettings('akey', 'token', 'password', settingsObj, function(err, set) {
+evnotify.setSettings('password', settingsObj, function(err, set) {
   console.log('Settings saved: ', set);  // True, if successful
 });
 ```
@@ -379,7 +380,7 @@ curl "https://evnotify.de:8743/renewtoken"
 var evnotify = new EVNotify();
 
 // renew token of the account
-evnotify.renewToken('akey', 'password', function(err, token) {
+evnotify.renewToken('password', function(err, token) {
   console.log('New token: ', token);  // The new token
 });
 ```
