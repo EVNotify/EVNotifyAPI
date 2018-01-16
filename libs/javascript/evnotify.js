@@ -177,6 +177,34 @@
         return self;
     };
 
+    /**
+     * Function to set the settings and stats of the account for the given AKey
+     * @param  {String}   password      the password of the AKey to set the settings and stats for
+     * @param  {Object}   settingsObj   the object containing all keys to set
+     * @param  {Function} [callback]    callback function
+     * @return {Object}                 returns this
+     */
+    EVNotify.prototype.setSettings = function(password, settingsObj, callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('settings', {
+                akey: self.akey,
+                token: self.token,
+                password: password,
+                option: 'SET',
+                optionObj: settingsObj
+            }, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
+            });
+        }
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());
