@@ -229,6 +229,51 @@ evnotify.changePW('oldpassword', 'newpassword', function(err, changed) {
 });
 ```
 
+## Renew the account token
+In order to be able to renew the token of your account, you will need to provide the AKey as well as the password of the account.
+Changing the account token in regular periods is a good security manner.
+
+<aside class="warning">
+Renewing the token instantly changes the token of the account, so the old token is no longer usable.
+</aside>
+
+### HTTPS Request
+
+`POST https://evnotify.de:8743/renewtoken`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+akey | The AKey of the account to renew the token for
+password | The password of the account
+
+```shell
+curl "https://evnotify.de:8743/renewtoken"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","password":"password"}'
+```
+
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Token renewed",
+  "token": "newtoken"
+}
+```
+
+```javascript
+var evnotify = new EVNotify();
+
+// renew token of the account
+evnotify.renewToken('password', function(err, token) {
+  console.log('New token: ', token);  // The new token
+});
+```
+
+# Settings and stats
+
 ## Get settings and stats from account
 Every account has a collection of settings and stats. Those collection store information about the connection and settings for the state of charge monitoring and notification.
 
@@ -342,48 +387,7 @@ evnotify.setSettings('password', settingsObj, function(err, set) {
 });
 ```
 
-## Renew the account token
-In order to be able to renew the token of your account, you will need to provide the AKey as well as the password of the account.
-Changing the account token in regular periods is a good security manner.
-
-<aside class="warning">
-Renewing the token instantly changes the token of the account, so the old token is no longer usable.
-</aside>
-
-### HTTPS Request
-
-`POST https://evnotify.de:8743/renewtoken`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-akey | The AKey of the account to renew the token for
-password | The password of the account
-
-```shell
-curl "https://evnotify.de:8743/renewtoken"
-  -H "Content-Type: application/json"
-  -X POST -d '{"akey":"akey","password":"password"}'
-```
-
-> The request returns JSON like this:
-
-```json
-{
-  "message": "Token renewed",
-  "token": "newtoken"
-}
-```
-
-```javascript
-var evnotify = new EVNotify();
-
-// renew token of the account
-evnotify.renewToken('password', function(err, token) {
-  console.log('New token: ', token);  // The new token
-});
-```
+# Synchronization
 
 ## Synchronize the settings and stats
 If you want to synchronize the settings and stats of an account without entering a password (for example when you want to synchronize them in the background),
@@ -413,14 +417,12 @@ token | The token of the account
 type | determines whether you want to retrieve the settings ('PULL' as type) or set the settings ('PUSH' as type)
 syncObj | the settings object you want to set (only necessary if 'PUSH' as type)
 
-> To retrieve the settings:
-
 ```shell
 curl "https://evnotify.de:8743/sync"
   -H "Content-Type: application/json"
   -X POST -d '{"akey":"akey","token":"token", "type": "PULL"}'
 ```
-> The request returns JSON like this:
+> The sync request (PULL) returns JSON like this:
 
 ```json
 {
@@ -439,15 +441,13 @@ curl "https://evnotify.de:8743/sync"
 }
 ```
 
-> To set the settings:
-
 ```shell
 curl "https://evnotify.de:8743/sync"
   -H "Content-Type: application/json"
   -X POST -d '{"akey":"akey","token":"token", "type": "PUSH", syncObj: "{}"}'
 ```
 
-> The request returns JSON like this:
+> The sync request (PUSH) returns JSON like this:
 
 ```json
 {
