@@ -384,3 +384,89 @@ evnotify.renewToken('password', function(err, token) {
   console.log('New token: ', token);  // The new token
 });
 ```
+
+## Synchronize the settings and stats
+If you want to synchronize the settings and stats of an account without entering a password (for example when you want to synchronize them in the background),
+you can make use of the sync request. This request allows you to retrieve or set the settings without being prompted for a password.
+Please note, that this requires to have 'autoSync' option set previously with the setSettings request, if not enabled yet.
+
+<aside class="warning">
+Disabling 'autoSync' prevents you from using the sync request, so you can't retrieve or set the settings and stats without a password.
+You still need a token, even when 'autoSync' has been enabled.
+</aside>
+
+<aside class="notice">
+This request does the same as getSettings or setSettings request, but it doesn't require a password.
+If you want to use the normal requests to change or get the settings, use those requests instead.
+</aside>
+
+### HTTPS Request
+
+`POST https://evnotify.de:8743/sync`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+akey | The AKey of the account to sync the settings for
+token | The token of the account
+type | determines whether you want to retrieve the settings ('PULL' as type) or set the settings ('PUSH' as type)
+syncObj | the settings object you want to set (only necessary if 'PUSH' as type)
+
+> To retrieve the settings:
+
+```shell
+curl "https://evnotify.de:8743/sync"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","token":"token", "type": "PULL"}'
+```
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Pull for sync succeeded",
+  "syncRes": {
+      "email": "email",
+      "telegram": "telegram",
+      "soc": "soc",
+      "curSoC": "curSoC",
+      "device": "device",
+      "polling": "polling",
+      "autoSync": "autoSync",
+      "lng": "lng",
+      "push": "push"
+  }
+}
+```
+
+> To set the settings:
+
+```shell
+curl "https://evnotify.de:8743/sync"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","token":"token", "type": "PUSH", syncObj: "{}"}'
+```
+
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Push for sync succeeded",
+  "syncRes": true
+}
+```
+
+```javascript
+var evnotify = new EVNotify(),
+    syncObj = {};   // the settings object containing all required information
+
+// retrieve the settings
+evnotify.pullSettings(function(err, settingsObj) {
+  console.log('Settings: ', settingsObj);  // The settings and stats of the account
+});
+
+// set the settings
+evnotify.pushSettings(syncObj, function(err, pushed) {
+  console.log('Push succeeded: ', pushed);
+});
+```

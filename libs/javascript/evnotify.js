@@ -205,6 +205,58 @@
         return self;
     };
 
+    /**
+     * Function to retrieve the settings and stats of the account without being prompted for a password
+     * NOTE: Requires 'autoSync' to be enabled for the given AKey
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.pullSettings = function(callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('sync', {
+                akey: self.akey,
+                token: self.token,
+                type: 'PULL',
+            }, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res && res.data)? res.data.syncRes : null));
+            });
+        }
+
+        return self;
+    };
+
+    /**
+     * Function to apply the settings and stats of the account without being prompted for a password
+     * NOTE: Requires 'autoSync' to be enabled for the given AKey
+     * @param  {Object} syncObj     the object containing all the settings and stats
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.pushSettings = function(syncObj, callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('sync', {
+                akey: self.akey,
+                token: self.token,
+                type: 'PUSH',
+                syncObj: syncObj
+            }, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res && res.data)? res.data.syncRes : null));
+            });
+        }
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());
