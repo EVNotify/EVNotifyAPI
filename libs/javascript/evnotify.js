@@ -257,6 +257,31 @@
         return self;
     };
 
+    /**
+     * Function to submit the current state of charge for the AKey
+     * @param  {Number}   soc       the state of charge to set
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.syncSoC = function(soc, callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('syncSoC', {
+                akey: self.akey,
+                token: self.token,
+                soc: soc
+            }, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
+            });
+        }
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());

@@ -470,3 +470,47 @@ evnotify.pushSettings(syncObj, function(err, pushed) {
   console.log('Push succeeded: ', pushed);
 });
 ```
+
+## Synchronize the state of charge
+
+The main advantage of EVNotify is the monitoring of the state of charge. To be able to track it and fetch it at any time, you'll need to inform the server about the current value.
+You can also manually set the 'curSoC' property within the sync (type 'PUSH') or setSettings request. But the syncSoC request will only update the state of charge and decreases the data usage.
+
+<aside class="notice">
+The syncSoC request only sets the current state of charge. To be able to retrieve the state of charge later, you will need to use the sync request (type 'PULL') or the getSettings request.
+Later, there will also be an additional request, which will directly give you the last submitted state of charge along with some other information.
+</aside>
+
+### HTTPS Request
+
+`POST https://evnotify.de:8743/syncSoC`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+akey | The AKey of the account to sync the settings for
+token | The token of the account
+soc | The state of charge you want to submit
+
+```shell
+curl "https://evnotify.de:8743/sync"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","token":"token", "soc": 42}'
+```
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Sync for soc succeeded"
+}
+```
+
+```javascript
+var evnotify = new EVNotify();
+
+// submit the current state of charge
+evnotify.syncSoC(42, function(err, synced) {
+  console.log('SoC sync succeeded: ', synced);
+});
+```
