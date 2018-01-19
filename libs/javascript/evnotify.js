@@ -282,6 +282,29 @@
         return self;
     };
 
+    /**
+     * Function to send out all available / enabled notifications for the AKey
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.sendNotification = function(callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('notification', {
+                akey: self.akey,
+                token: self.token
+            }, function(err, res) {
+                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
+            });
+        }
+
+        return self;
+    };
+
     // apply to window
     window.EVNotify = EVNotify;
 }());

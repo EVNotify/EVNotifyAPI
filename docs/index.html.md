@@ -489,12 +489,12 @@ Later, there will also be an additional request, which will directly give you th
 
 Parameter | Description
 --------- | -----------
-akey | The AKey of the account to sync the settings for
+akey | The AKey of the account to sync the state of charge for
 token | The token of the account
 soc | The state of charge you want to submit
 
 ```shell
-curl "https://evnotify.de:8743/sync"
+curl "https://evnotify.de:8743/syncSoC"
   -H "Content-Type: application/json"
   -X POST -d '{"akey":"akey","token":"token", "soc": 42}'
 ```
@@ -512,5 +512,55 @@ var evnotify = new EVNotify();
 // submit the current state of charge
 evnotify.syncSoC(42, function(err, synced) {
   console.log('SoC sync succeeded: ', synced);
+});
+```
+
+# Notifications
+
+After submitting the current state of charge, you may want to send out notifications, if the desired state of charge has been achieved.
+This process will NOT be automatically triggered, even when you set a soc threshold.
+The notification request will send the notifications to all available notification ways, which were available / enabled at the time of the request.
+If no notification way has been declared, no notification will be sent out, but also no error will be received.
+
+<aside class="warning">
+This request will be processed completely asynchronously and run in the background. For that reason, you will not informed about eventually mistakes (e.g. non-existing mail).
+You can not choose a specific way of notification, all available notifications, which were activated for the account, will be sent out.
+</aside>
+
+<aside class="notice">
+There are currently three types of notification ways: Mail, Telegram and Push. But Push isn't available yet.
+Telegram also offers real-time information and many more things. More information will be found within the EVNotify Wiki.
+</aside>
+
+### HTTPS Request
+
+`POST https://evnotify.de:8743/notification`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+akey | The AKey of the account to send the notifications for
+token | The token of the account
+
+```shell
+curl "https://evnotify.de:8743/notification"
+  -H "Content-Type: application/json"
+  -X POST -d '{"akey":"akey","token":"token"}'
+```
+> The request returns JSON like this:
+
+```json
+{
+  "message": "Notifications successfully sent"
+}
+```
+
+```javascript
+var evnotify = new EVNotify();
+
+// sends all available notification types which are enabled for account
+evnotify.sendNotification(function(err, sent) {
+  console.log('Notifications sent: ', sent);
 });
 ```
