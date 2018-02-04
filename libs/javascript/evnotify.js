@@ -59,7 +59,7 @@
 
         sendRequest('getkey', {}, function(err, res) {
             // send response to callback if applied
-            if(typeof callback === 'function') callback(err, ((err)? null : self.akey));
+            if(typeof callback === 'function') callback(err, ((err)? null : ((res && res.data)? res.data.akey : null)));
         });
 
         return self;
