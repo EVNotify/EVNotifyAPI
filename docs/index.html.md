@@ -1,51 +1,52 @@
 ---
-title: EVNotify API Reference
-
-language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - javascript
-
+title: EVNotify API
+language_tabs:
+  - shell: Shell
+  - javascript: JavaScript
 toc_footers:
-  - <a href='#'>EVNotify</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  #- errors
-
+  - >-
+    <a href="https://github.com/GPlay97/EVNotifyAPI">Edit the doc files</a>
+includes: []
 search: true
+highlight_theme: darkula
+headingLevel: 2
+
 ---
 
-# Introduction
+<h1 id="EVNotify-API">EVNotify API</h1>
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+> Complete documentation and libraries for EVNotify API can be found on <a href="https://github.com/GPlay97/EVNotifyAPI">GitHub</a>
 
 Welcome to the EVNotify API! You can use the API to set and fetch useful information.
 
-To use the API, you can either send the requests directly (over Shell) or you can use the easy-to-use JavaScript Library, which you will find within the EVNotifyAPI Repository on GitHub.
+This API is in an early-access development. 
 
-This API is in an early-access development. Feel free to enhance this API Documentation and send suggestions to
-improve the API by itself.
+Feel free to enhance this API Documentation and send suggestions to improve the API by itself.
 
-To be able to use this API, you must register an account. With registering an account, you agree to the terms of use
-of EVNotify.
+To be able to use this API, you must register an account. With registering an account, you agree to the terms of use of EVNotify.
 
-# Endpoints
+Base URLs:
 
-The API for EVNotify can be accessed over HTTP as well as HTTPS. HTTP is deprecated and for security-reasons you
-should use the HTTPS endpoint. Some requests may require HTTPS only, so HTTP will be removed some time.
-If your application is still using the HTTP endpoint, you should be thinking about upgrading to HTTPS endpoint.
+* <a href="https://github.com/GPlay97/EVNotifyAPI">EVNotify API on GitHub</a>
 
-<aside class="notice">
-HTTP endpoint uses port 8714 (http://evnotify.de:8714)
-</aside>
+* <a href="https://evnotify.de">EVNotify Website</a>
 
-<aside class="notice">
-HTTPS endpoint uses port 8743 (https://evnotify.de:8743)
-</aside>
+<h1 id="EVNotify-API-v1">v1</h1>
+
+EVNotify API v1.
+
+HTTPS endpoint uses port <b>8743</b> (https://evnotify.de:8743).
+HTTP endpoint is no longer available.
+<b>HTTPS is required.</b>
 
 <aside class="warning">
-Using the HTTP endpoint is deprecated and is no longer recommended. You should switch to the HTTPS endpoint soon.
+Using the v1 API is deprecated and no longer recommended. You should switch to the improved v2 API as soon as possible.
 </aside>
 
-# Authentication
+## Authentication
+
+<a id="opIdAuthentication"></a>
 
 To be able to interact with the EVNotify API, most requests requires an authentication.
 This is done by providing your so called AKey, which is your account identifier, to the request together with
@@ -53,6 +54,7 @@ your personal token.
 <aside class="warning">
 Don't share your personal token with others! Keep it safe!
 </aside>
+
 ## Get a new key
 
 If you don't have an AKey yet, you have to create a new account in order to be able to interact with the whole API.
@@ -90,8 +92,10 @@ evnotify.getKey(function(err, key) {
 ```
 
 ## Register a new account
-After retrieving an unused AKey, you can register it. You need to specify the AKey, as well as a password.
-For your own safety, you should choose a strong password. The minimum length for a valid password is 6 characters.
+
+<a id="opIdRegister"></a>
+
+After retrieving an unused AKey, you can register it. You need to specify the AKey, as well as a password. For your own safety, you should choose a strong password. The minimum length for a valid password is 6 characters.
 
 <aside class="warning">
 Currently there is no possibility to recover a lost password. You can only change the password if you know the old one.
@@ -137,7 +141,10 @@ The AKey and the retrieved token will be stored within the EVNotify instance.
 In this sample, you would access them with evnotify.akey and evnotify.token.
 </aside>
 
+
 ## Login with existing account
+
+<a id="opIdLogin"></a>
 
 Once you've registered an account - or already have an account, you can login with your credentials.
 This will give you the token, which authenticates your account.
@@ -183,6 +190,8 @@ evnotify.login('akey', 'password', function(err, token) {
 ```
 
 ## Change the password for an account
+
+<a id="opIdChangePW"></a>
 
 In order to be able to change the password for an account, you need to first enter your old password.
 Currently it is not possible to recover a lost password.
@@ -230,6 +239,9 @@ evnotify.changePW('oldpassword', 'newpassword', function(err, changed) {
 ```
 
 ## Renew the account token
+
+<a id="opIdRenewToken"></a>
+
 In order to be able to renew the token of your account, you will need to provide the AKey as well as the password of the account.
 Changing the account token in regular periods is a good security manner.
 
@@ -272,9 +284,10 @@ evnotify.renewToken('password', function(err, token) {
 });
 ```
 
-# Settings and stats
-
 ## Get settings and stats from account
+
+<a id="opIdGetSettings"></a>
+
 Every account has a collection of settings and stats. Those collection store information about the connection and settings for the state of charge monitoring and notification.
 
 <aside class="notice">
@@ -335,6 +348,9 @@ evnotify.getSettings('password', function(err, settingsObj) {
 ```
 
 ## Set settings and stats for account
+
+<a id="opIdSetSettings"></a>
+
 You can modify the settings for the state of charge monitoring, notification and other settings and stats for the account.
 Be careful, since wrong changes can break a working notification or other things.
 
@@ -387,9 +403,10 @@ evnotify.setSettings('password', settingsObj, function(err, set) {
 });
 ```
 
-# Synchronization
-
 ## Synchronize the settings and stats
+
+<a id="opIdSyncSettings"></a>
+
 If you want to synchronize the settings and stats of an account without entering a password (for example when you want to synchronize them in the background),
 you can make use of the sync request. This request allows you to retrieve or set the settings without being prompted for a password.
 Please note, that this requires to have 'autoSync' option set previously with the setSettings request, if not enabled yet.
@@ -473,6 +490,8 @@ evnotify.pushSettings(syncObj, function(err, pushed) {
 
 ## Synchronize the state of charge
 
+<a id="opIdSyncSoC"></a>
+
 The main advantage of EVNotify is the monitoring of the state of charge. To be able to track it and fetch it at any time, you'll need to inform the server about the current value.
 You can also manually set the 'curSoC' property within the sync (type 'PUSH') or setSettings request. But the syncSoC request will only update the state of charge and decreases the data usage.
 
@@ -515,7 +534,9 @@ evnotify.syncSoC(42, function(err, synced) {
 });
 ```
 
-# Notifications
+## Notifications
+
+<a id="opIdNotifications"></a>
 
 After submitting the current state of charge, you may want to send out notifications, if the desired state of charge has been achieved.
 This process will NOT be automatically triggered, even when you set a soc threshold.
