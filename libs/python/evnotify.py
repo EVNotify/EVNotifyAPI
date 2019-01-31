@@ -19,3 +19,9 @@ class EVNotify:
             "akey": akey,
             "password": password
         })
+
+    def login(self, akey, password):
+        return self.sendRequest('post', 'login', False, {
+            "akey": akey,
+            "password": password
+        })
