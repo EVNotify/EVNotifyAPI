@@ -9,6 +9,9 @@ class EVNotify:
         self.token = token
 
     def sendRequest(self, method, fnc, useAuthentication = False, params = {}):
+        if useAuthentication:
+            params['akey'] = self.akey
+            params['token'] = self.token
         return getattr(requests, method)(self.RESTURL + fnc, json=params).json()
 
     def getKey(self):
@@ -29,3 +32,9 @@ class EVNotify:
         })['token']
         self.akey = akey
         return self.token
+
+    def changePassword(self, oldpassword, newpassword):
+        return self.sendRequest('post', 'changepw', True, {
+            "oldpassword": oldpassword,
+            "newpassword": newpassword
+        })['changed']
