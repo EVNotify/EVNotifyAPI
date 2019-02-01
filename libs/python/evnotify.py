@@ -15,13 +15,17 @@ class EVNotify:
         return self.sendRequest('get', 'key')['akey']
 
     def register(self, akey, password):
-        return self.sendRequest('post', 'register', False, {
+        self.token = self.sendRequest('post', 'register', False, {
             "akey": akey,
             "password": password
-        })
+        })['token']
+        self.akey = akey
+        return self.token
 
     def login(self, akey, password):
-        return self.sendRequest('post', 'login', False, {
+        self.token = self.sendRequest('post', 'login', False, {
             "akey": akey,
             "password": password
-        })
+        })['token']
+        self.akey = akey
+        return self.token
