@@ -67,3 +67,9 @@ class EVNotify:
 
     def setLocation(self, obj):
         return self.sendRequest('post', 'location', True, obj)['synced']
+
+    def renewToken(self, password):
+        self.token = self.sendRequest('put', 'renewtoken', True, {
+            "password": password
+        })['token']
+        return self.token
