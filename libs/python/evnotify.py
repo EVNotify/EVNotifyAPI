@@ -73,3 +73,8 @@ class EVNotify:
             "password": password
         })['token']
         return self.token
+
+    def sendNotification(self, abort = False):
+        return self.sendRequest('post', 'notification', True, {
+            "abort": abort
+        })['notified']
