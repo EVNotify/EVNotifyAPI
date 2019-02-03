@@ -38,3 +38,11 @@ class EVNotify:
             "oldpassword": oldpassword,
             "newpassword": newpassword
         })['changed']
+
+    def getSettings(self):
+        return self.sendRequest('get', 'settings', True)['settings']
+
+    def setSettings(self, settings):
+        return self.sendRequest('put', 'settings', True, {
+            "settings": settings
+        })['settings']
