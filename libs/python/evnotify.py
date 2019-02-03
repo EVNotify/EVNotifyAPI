@@ -56,8 +56,14 @@ class EVNotify:
     def getSOC(self):
         return self.sendRequest('get', 'soc', True)
 
-    def postExtended(self, obj):
+    def setExtended(self, obj):
         return self.sendRequest('post', 'extended', True, obj)['synced']
 
     def getExtended(self):
         return self.sendRequest('get', 'extended', True)
+
+    def getLocation(self):
+        return self.sendRequest('get', 'location', True)
+
+    def setLocation(self, obj):
+        return self.sendRequest('post', 'location', True, obj)['synced']
