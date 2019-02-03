@@ -46,3 +46,12 @@ class EVNotify:
         return self.sendRequest('put', 'settings', True, {
             "settings": settings
         })['settings']
+
+    def setSOC(self, display, bms):
+        return self.sendRequest('post', 'soc', True, {
+            "display": display,
+            "bms": bms
+        })['synced']
+
+    def getSOC(self):
+        return self.sendRequest('get', 'soc', True)
