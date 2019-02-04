@@ -12,6 +12,7 @@ class EVNotify:
         if useAuthentication:
             params['akey'] = self.akey
             params['token'] = self.token
+        if method == 'get': return getattr(requests, method)(self.RESTURL + fnc, params=params).json()
         return getattr(requests, method)(self.RESTURL + fnc, json=params).json()
 
     def getKey(self):
