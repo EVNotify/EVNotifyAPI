@@ -1,4 +1,9 @@
 # EVNotifyAPI
+
+### Notice:
+> The API for EVNotify v1 is deprecated and is no longer maintained.
+In the future it won't be no longer available.
+
 API for EVNotify (https://github.com/GPlay97/EVNotify)
 
 This repository contains the documentation files for the EVNotify API.
