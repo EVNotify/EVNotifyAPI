@@ -1,5 +1,5 @@
 # EVNotifyAPI
-API for EVNotify (https://github.com/GPlay97/EVNotify)
+API for EVNotify (https://github.com/EVNotify/EVNotify)
 
 This repository contains the documentation files for the EVNotify API.
 It also contains the easy-to-use API libraries for EVNotify.
