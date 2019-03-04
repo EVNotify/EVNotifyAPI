@@ -1,23 +1,24 @@
 (function () {
     'use strict';
 
-    var RESTURL = 'https://evnotify.de:8743/';
+    var RESTURL = 'https://app.evnotify.de/';
 
     /**
      * Function which sends a specific request to backend server and returns the information/data (or error information if any)
+     * @param {String}      [type]      the HTTP method to use (POST|GET|PUT|DELETE)
      * @param  {String}     [fnc]       the function which should be used (e.g. login)
      * @param  {*}          [data]      the data to send (mostly an object)
      * @param  {Function}   callback    callback function
      * @return {void}
      */
-    var sendRequest = function(fnc, data, callback) {
+    var sendRequest = function(type, fnc, data, callback) {
         try {
-            var xmlhttp = new XMLHttpRequest(),
+            var xmlHttp = new XMLHttpRequest(),
                 retData;
 
             // apply listener for the request
-            xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4) {
+            xmlHttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
                     // try to parse the response as JSON
                     try {retData = JSON.parse(this.responseText);} catch (e) {retData = this.responseText}
 
@@ -27,13 +28,13 @@
                     });
                 }
             };
-            xmlhttp.onerror = function(e) {
+            xmlHttp.onerror = function(e) {
                 callback(e, null);
             };
             // send the request
-            xmlhttp.open('POST', RESTURL + ((fnc)? fnc : ''), true);
-            xmlhttp.setRequestHeader('Content-Type', 'application/json');
-            xmlhttp.send(((typeof data === 'object')? JSON.stringify(data) : ((typeof data !== 'undefined')? data : '')));
+            xmlHttp.open(type.toUpperCase(), RESTURL + ((fnc)? fnc : ''), true);
+            xmlHttp.setRequestHeader('Content-Type', 'application/json');
+            xmlHttp.send(((typeof data === 'object')? JSON.stringify(data) : ((typeof data !== 'undefined')? data : '')));
         } catch (e) {
             callback(e, null);
         }
@@ -57,7 +58,7 @@
     EVNotify.prototype.getKey = function(callback) {
         var self = this;
 
-        sendRequest('getkey', {}, function(err, res) {
+        sendRequest('get', 'key', null, function(err, res) {
             // send response to callback if applied
             if(typeof callback === 'function') callback(err, ((err)? null : ((res && res.data)? res.data.akey : null)));
         });
@@ -75,7 +76,7 @@
     EVNotify.prototype.register = function (akey, password, callback) {
         var self = this;
 
-        sendRequest('register', {akey: akey, password: password}, function(err, res) {
+        sendRequest('post', 'register', {akey: akey, password: password}, function(err, res) {
             // attach token
             self.token = ((!err && res && res.data)? res.data.token : null);
             // attach AKey
@@ -97,7 +98,7 @@
     EVNotify.prototype.login = function (akey, password, callback) {
         var self = this;
 
-        sendRequest('login', {akey: akey, password: password}, function(err, res) {
+        sendRequest('post', 'login', {akey: akey, password: password}, function(err, res) {
             // attach token
             self.token = ((!err && res && res.data)? res.data.token : null);
             // attach AKey
@@ -124,8 +125,8 @@
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('password', {akey: self.akey, token: self.token, password: oldpassword, newpassword: newpassword}, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((err)? false : true));
+            sendRequest('post', 'changepw', {akey: self.akey, token: self.token, oldpassword: oldpassword, newpassword: newpassword}, function(err, res) {
+                if(typeof callback === 'function') callback(err, (!!(!err && res)));
             });
         }
 
@@ -146,7 +147,7 @@
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('renewtoken', {akey: self.akey, password: password}, function(err, res) {
+            sendRequest('put', 'renewtoken', {akey: self.akey, password: password}, function(err, res) {
                 // attach new token
                 self.token = ((!err && res && res.data && res.data.token)? res.data.token : self.token);
                 if(typeof callback === 'function') callback(err, ((err)? null : self.token));
@@ -158,18 +159,17 @@
 
     /**
      * Function to get the settings and stats of the account for the given AKey
-     * @param  {String}   password      the password of the AKey to get the settings and stats for
      * @param  {Function} [callback]    callback function
      * @return {Object}                 returns this
      */
-    EVNotify.prototype.getSettings = function(password, callback) {
+    EVNotify.prototype.getSettings = function(callback) {
         var self = this;
 
         // check authentication
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('settings', {akey: self.akey, token: self.token, password: password, option: 'GET'}, function(err, res) {
+            sendRequest('get', 'settings', {akey: self.akey, token: self.token}, function(err, res) {
                 if(typeof callback === 'function') callback(err, ((!err && res && res.data && res.data.settings)? res.data.settings : null));
             });
         }
@@ -179,78 +179,23 @@
 
     /**
      * Function to set the settings and stats of the account for the given AKey
-     * @param  {String}   password      the password of the AKey to set the settings and stats for
      * @param  {Object}   settingsObj   the object containing all keys to set
      * @param  {Function} [callback]    callback function
      * @return {Object}                 returns this
      */
-    EVNotify.prototype.setSettings = function(password, settingsObj, callback) {
+    EVNotify.prototype.setSettings = function(settingsObj, callback) {
         var self = this;
 
         // check authentication
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('settings', {
+            sendRequest('put', 'settings', {
                 akey: self.akey,
                 token: self.token,
-                password: password,
-                option: 'SET',
-                optionObj: settingsObj
+                settings: settingsObj
             }, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
-            });
-        }
-
-        return self;
-    };
-
-    /**
-     * Function to retrieve the settings and stats of the account without being prompted for a password
-     * NOTE: Requires 'autoSync' to be enabled for the given AKey
-     * @param  {Function} callback  callback function
-     * @return {Object}             returns this
-     */
-    EVNotify.prototype.pullSettings = function(callback) {
-        var self = this;
-
-        // check authentication
-        if(!self.akey || !self.token) {
-            if(typeof callback === 'function') callback(401, null); // missing previous login request
-        } else {
-            sendRequest('sync', {
-                akey: self.akey,
-                token: self.token,
-                type: 'PULL',
-            }, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((!err && res && res.data)? res.data.syncRes : null));
-            });
-        }
-
-        return self;
-    };
-
-    /**
-     * Function to apply the settings and stats of the account without being prompted for a password
-     * NOTE: Requires 'autoSync' to be enabled for the given AKey
-     * @param  {Object} syncObj     the object containing all the settings and stats
-     * @param  {Function} callback  callback function
-     * @return {Object}             returns this
-     */
-    EVNotify.prototype.pushSettings = function(syncObj, callback) {
-        var self = this;
-
-        // check authentication
-        if(!self.akey || !self.token) {
-            if(typeof callback === 'function') callback(401, null); // missing previous login request
-        } else {
-            sendRequest('sync', {
-                akey: self.akey,
-                token: self.token,
-                type: 'PUSH',
-                syncObj: syncObj
-            }, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((!err && res && res.data)? res.data.syncRes : null));
+                if(typeof callback === 'function') callback(err, (!!(!err && res)));
             });
         }
 
@@ -259,23 +204,48 @@
 
     /**
      * Function to submit the current state of charge for the AKey
-     * @param  {Number}   soc       the state of charge to set
+     * @param  {Number} display       the state of charge (display) to set
+     * @param {Number} bms the state of charge (bms) to set
      * @param  {Function} callback  callback function
      * @return {Object}             returns this
      */
-    EVNotify.prototype.syncSoC = function(soc, callback) {
+    EVNotify.prototype.setSOC = function(display, bms, callback) {
         var self = this;
 
         // check authentication
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('syncSoC', {
+            sendRequest('post', 'soc', {
                 akey: self.akey,
                 token: self.token,
-                soc: soc
+                display: display,
+                bms: bms
             }, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
+                if(typeof callback === 'function') callback(err, (!!(!err && res)));
+            });
+        }
+
+        return self;
+    };
+
+    /**
+     * Function to get the current state of charge for the AKey
+     * @param  {Function} callback  callback function
+     * @return {Object}             returns this
+     */
+    EVNotify.prototype.getSOC = function(callback) {
+        var self = this;
+
+        // check authentication
+        if(!self.akey || !self.token) {
+            if(typeof callback === 'function') callback(401, null); // missing previous login request
+        } else {
+            sendRequest('get', 'soc', {
+                akey: self.akey,
+                token: self.token
+            }, function(err, socObj) {
+                if(typeof callback === 'function') callback(err,  ((!err && socObj) ? socObj : null));
             });
         }
 
@@ -287,18 +257,19 @@
      * @param  {Function} callback  callback function
      * @return {Object}             returns this
      */
-    EVNotify.prototype.sendNotification = function(callback) {
+    EVNotify.prototype.sendNotification = function(abort, callback) {
         var self = this;
 
         // check authentication
         if(!self.akey || !self.token) {
             if(typeof callback === 'function') callback(401, null); // missing previous login request
         } else {
-            sendRequest('notification', {
+            sendRequest('post', 'notification', {
                 akey: self.akey,
-                token: self.token
+                token: self.token,
+                abort: abort
             }, function(err, res) {
-                if(typeof callback === 'function') callback(err, ((!err && res)? true : false));
+                if(typeof callback === 'function') callback(err, (!!(!err && res)));
             });
         }
 
