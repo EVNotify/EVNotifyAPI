@@ -16,6 +16,9 @@
             var xmlHttp = new XMLHttpRequest(),
                 retData;
 
+            type = type.toUpperCase();
+            data = ((typeof data === 'object' && data != null) ? data : '');
+
             // apply listener for the request
             xmlHttp.onreadystatechange = function() {
                 if (this.readyState === 4) {
@@ -32,9 +35,16 @@
                 callback(e, null);
             };
             // send the request
-            xmlHttp.open(type.toUpperCase(), RESTURL + ((fnc)? fnc : ''), true);
+            xmlHttp.open(type, RESTURL + ((fnc)? fnc : '') + ((type === 'GET' && data) ?
+                    "?" + Object
+                        .keys(data)
+                        .map(function(key){
+                            return key+"="+encodeURIComponent(data[key])
+                        })
+                        .join("&") : ''
+            ), true);
             xmlHttp.setRequestHeader('Content-Type', 'application/json');
-            xmlHttp.send(((typeof data === 'object')? JSON.stringify(data) : ((typeof data !== 'undefined')? data : '')));
+            xmlHttp.send(((data)? JSON.stringify(data) : data));
         } catch (e) {
             callback(e, null);
         }
@@ -245,7 +255,7 @@
                 akey: self.akey,
                 token: self.token
             }, function(err, socObj) {
-                if(typeof callback === 'function') callback(err,  ((!err && socObj) ? socObj : null));
+                if(typeof callback === 'function') callback(err,  ((!err && socObj && socObj.data) ? socObj.data : null));
             });
         }
 
