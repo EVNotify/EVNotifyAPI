@@ -1,4 +1,5 @@
-# EVNotifyAPI
+# EVNotifyAPI [![codebeat badge](https://codebeat.co/badges/87e92ce5-2245-4830-8916-00f8704a371b)](https://codebeat.co/projects/github-com-gplay97-evnotifyapi-master)
+
 API for EVNotify (https://github.com/EVNotify/EVNotify)
 
 This repository contains the documentation files for the EVNotify API.
