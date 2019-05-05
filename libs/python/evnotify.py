@@ -8,6 +8,7 @@ class EVNotify:
     def __init__(self, akey = None, token = None):
         self.RESTURL = 'https://app.evnotify.de/'
         self.session = requests.Session()
+        self.session.headers.update({'User-Agent': 'PyEVNotifyApi/2'})
         self.akey = akey
         self.token = token
 
