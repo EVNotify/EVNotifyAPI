@@ -12,7 +12,8 @@ class EVNotify:
         self.akey = akey
         self.token = token
 
-    def sendRequest(self, method, fnc, useAuthentication = False, params = {}):
+    def sendRequest(self, method, fnc, useAuthentication = False, data = {}):
+        params = {**data}
         if useAuthentication:
             params['akey'] = self.akey
             params['token'] = self.token
