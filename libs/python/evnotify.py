@@ -1,9 +1,9 @@
 import json
 import requests
 
-class EVNotify:
+class CommunicationError(Exception): pass
 
-    class CommunicationError(Exception): pass
+class EVNotify:
 
     def __init__(self, akey = None, token = None):
         self.RESTURL = 'https://app.evnotify.de/'
@@ -24,7 +24,7 @@ class EVNotify:
                 return getattr(self.session, method)(self.RESTURL + fnc, json=params).json()
 
         except requests.exceptions.ConnectionError:
-            raise EVNotify.CommunicationError()
+            raise CommunicationError()
 
     def getKey(self):
         return self.sendRequest('get', 'key')['akey']
@@ -46,30 +46,34 @@ class EVNotify:
         return self.token
 
     def changePassword(self, oldpassword, newpassword):
-        return self.sendRequest('post', 'changepw', True, {
+        ret = self.sendRequest('post', 'changepw', True, {
             "oldpassword": oldpassword,
             "newpassword": newpassword
-        })['changed']
+        })
+        return ret['changed'] if 'changed' in ret else None
 
     def getSettings(self):
         return self.sendRequest('get', 'settings', True)['settings']
 
     def setSettings(self, settings):
-        return self.sendRequest('put', 'settings', True, {
+        ret = self.sendRequest('put', 'settings', True, {
             "settings": settings
-        })['settings']
+        })
+        return ret['settings'] if 'settings' in ret else None
 
     def setSOC(self, display, bms):
-        return self.sendRequest('post', 'soc', True, {
+        ret = self.sendRequest('post', 'soc', True, {
             "display": display,
             "bms": bms
-        })['synced']
+        })
+        return ret['synced'] if 'synced' in ret else None
 
     def getSOC(self):
         return self.sendRequest('get', 'soc', True)
 
     def setExtended(self, obj):
-        return self.sendRequest('post', 'extended', True, obj)['synced']
+        ret = self.sendRequest('post', 'extended', True, obj)
+        return ret['synced'] if 'synced' in ret else None
 
     def getExtended(self):
         return self.sendRequest('get', 'extended', True)
@@ -78,7 +82,8 @@ class EVNotify:
         return self.sendRequest('get', 'location', True)
 
     def setLocation(self, obj):
-        return self.sendRequest('post', 'location', True, obj)['synced']
+        ret = self.sendRequest('post', 'location', True, obj)
+        return ret['synced'] if 'synced' in ret else None
 
     def renewToken(self, password):
         self.token = self.sendRequest('put', 'renewtoken', True, {
