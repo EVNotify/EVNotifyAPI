@@ -11,6 +11,7 @@ class EVNotify:
         self.session.headers.update({'User-Agent': 'PyEVNotifyApi/2'})
         self.akey = akey
         self.token = token
+        self.timeout = 5
 
     def sendRequest(self, method, fnc, useAuthentication = False, data = {}):
         params = {**data}
@@ -19,11 +20,13 @@ class EVNotify:
             params['token'] = self.token
         try:
             if method == 'get':
-                return getattr(self.session, method)(self.RESTURL + fnc, params=params).json()
+                return getattr(self.session, method)(self.RESTURL + fnc, params=params, timeout=self.timeout).json()
             else:
-                return getattr(self.session, method)(self.RESTURL + fnc, json=params).json()
+                return getattr(self.session, method)(self.RESTURL + fnc, json=params, timeout=self.timeout).json()
 
         except requests.exceptions.ConnectionError:
+            raise CommunicationError()
+        except TypeError:
             raise CommunicationError()
 
     def getKey(self):
