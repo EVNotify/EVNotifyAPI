@@ -26,6 +26,8 @@ class EVNotify:
 
         except requests.exceptions.ConnectionError:
             raise CommunicationError()
+        except requests.exceptions.Timeout:
+            raise CommunicationError()
         except TypeError:
             raise CommunicationError()
 
