@@ -22,9 +22,9 @@ Welcome to the EVNotify API! You can use the API to set and fetch useful informa
 
 This API is in an early-access development. 
 
-Feel free to enhance this API Documentation and send suggestions to improve the API by itself.
+Feel free to enhance this API documentation and send suggestions to improve the API itself.
 
-To be able to use this API, you must register an account. With registering an account, you agree to the terms of use of EVNotify.
+To be able to use this API, you must register an account. By registering an account, you agree to the terms of use of EVNotify.
 
 Base URLs:
 
@@ -48,11 +48,11 @@ Using the v1 API is deprecated and no longer recommended. You should switch to t
 
 <a id="opIdAuthentication"></a>
 
-To be able to interact with the EVNotify API, most requests requires an authentication.
+To be able to interact with the EVNotify API, most requests require authentication.
 This is done by providing your so called AKey, which is your account identifier, to the request together with
 your personal token.
 <aside class="warning">
-Don't share your personal token with others! Keep it safe!
+Don't share your personal token with others. Keep it safe!
 </aside>
 
 ## Get a new key
@@ -356,7 +356,7 @@ Be careful, since wrong changes can break a working notification or other things
 
 <aside class="warning">
 Even when you only want to modify one setting property, you will need to send all the settings.
-Otherwise missing keys will be reseted and emptied.
+Otherwise missing keys will be reset and emptied.
 So it is recommended to first retrieve all the current settings with the getSettings request and then just modify the properties you want to change.
 </aside>
 
